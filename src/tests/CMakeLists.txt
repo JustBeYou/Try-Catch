@@ -23,7 +23,7 @@ add_executable( ${MAIN_EXE_NAME} ${MAIN_SOURCES}
               )
 
 ## 2. Link...
-target_link_libraries( ${MAIN_EXE_NAME} )
+target_link_libraries( ${MAIN_EXE_NAME} ${PROJECT_SOURCE_DIR}/lib/libtry-catch.so )
 
 ## 3. Install...
 install( TARGETS ${MAIN_EXE_NAME}

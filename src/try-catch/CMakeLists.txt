@@ -5,6 +5,7 @@ cmake_minimum_required( VERSION 3.11 )
 
 ## Sources and headers
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 
 ## C compiler options
 set( CMAKE_C_FLAGS "-Wall -Wextra" )
@@ -12,20 +13,19 @@ set( CMAKE_C_FLAGS_DEBUG "-g -O0" )
 set( CMAKE_C_FLAGS_RELEASE "-O3" )
 
 ## Source file containing the "main" function
-set( MAIN_SOURCES main.c )
+set( SOURCES exceptions.c )
 ## Specify a name for the generated executable file
-set( MAIN_EXE_NAME try-catch )
+set( TRY_CATCH_LIB try-catch )
 
 
 ## 1. Compile...
-add_executable( ${MAIN_EXE_NAME} ${MAIN_SOURCES}
-                                 ${SOURCES}
-              )
+add_library( ${TRY_CATCH_LIB} SHARED ${SOURCES} )
 
 ## 2. Link...
-target_link_libraries( ${MAIN_EXE_NAME} )
+target_link_libraries( ${TRY_CATCH_LIB} )
 
 ## 3. Install...
-install( TARGETS ${MAIN_EXE_NAME}
-         RUNTIME DESTINATION bin )
+install( TARGETS ${TRY_CATCH_LIB}
+        LIBRARY DESTINATION bin/lib
+        COMPONENT library )
 
