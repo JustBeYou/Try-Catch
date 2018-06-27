@@ -1,34 +1,24 @@
 cmake_minimum_required( VERSION 3.11 )
 
-## Required software
-#find_package( <<<name>>> REQUIRED )
+## Load CMAKE configuration from environment variables
+set( CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH} )
+set( CMAKE_PREFIX_PATH $ENV{CMAKE_PREFIX_PATH} )
 
-## Sources and headers
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
-
-## Find all source files to be compiled into object files
-file( GLOB SOURCES *.c )
-
-## C compiler options
-set( CMAKE_C_FLAGS "-Wall -Wextra" )
-set( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-set( CMAKE_C_FLAGS_RELEASE "-O3" )
-
-## Source file containing the "main" function
-set( MAIN_SOURCES main.c )
-## Specify a name for the generated executable file
-set( MAIN_EXE_NAME try-catch )
+## Specify a project name
+project( try-catch C)
 
 
-## 1. Compile...
-add_executable( ${MAIN_EXE_NAME} ${MAIN_SOURCES}
-                                 ${SOURCES}
-              )
+## Set the build type
+if( NOT CMAKE_BUILD_TYPE )
+  set( CMAKE_BUILD_TYPE "Release"
+       CACHE STRING "Build configuration 'Release' or 'Debug'."
+       FORCE )
+endif()
 
-## 2. Link...
-target_link_libraries( ${MAIN_EXE_NAME} )
+## Install the executable to <install_directory>/bin
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+## Install libraries (if any) to <install_directory>/bin
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-## 3. Install...
-install( TARGETS ${MAIN_EXE_NAME}
-         RUNTIME DESTINATION bin )
-
+#add_subdirectory(${PROJECT_SOURCE_DIR}/try-catch bin)
+add_subdirectory(${PROJECT_SOURCE_DIR}/tests bin)
