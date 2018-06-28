@@ -2,18 +2,30 @@
 
 #include "exceptions.h"
 
+#define TEST_EXCEPTION 123
+
 int main() {
     exceptions_init();
     
     try( 
     {
-      printf("Empty try\n");
+      printf("The try starts here\n");
+
+      throw(TEST_EXCEPTION);
+
+      printf("Should not arrive here...\n");
+
+      catch(TEST_EXCEPTION, 
+        {
+            printf("Gotcha!\n");
+        }
+      );
     }
     );
 
-    throw(123);
+    throw(TEST_EXCEPTION);
 
-    printf("test\n");
+    printf("Neither here\n");
 
     return 0;
 }
