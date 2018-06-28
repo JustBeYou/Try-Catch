@@ -1,6 +1,15 @@
 #include <stdio.h>
 
+#include "exceptions.h"
+
 int main() {
-    printf("Hello, world!\n");
+    try( 
+    {
+      printf("Empty try\n");  
+    }
+    );
+
+    printf("test\n");
+
     return 0;
 }
