@@ -51,7 +51,10 @@
 /*
  *
  */
-#define catch(exception, block)
+#define catch(exception, block) \
+    break; \
+    case exception: \
+        block
 
 /*
  * This would not be implemented soon. 
