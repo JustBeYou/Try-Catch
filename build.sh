@@ -1,4 +1,4 @@
 #!/bin/sh
 
-cmake src
+cmake src -DCMAKE_BUILD_TYPE=Debug
 make
