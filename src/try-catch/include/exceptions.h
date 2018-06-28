@@ -2,6 +2,10 @@
 #define EXCEPTIONS_H
 
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <setjmp.h>
+#include <stdio.h>
 
 #define DEFAULT_JMP_BUFFER_STACK_SIZE 512
 
@@ -24,7 +28,7 @@
         catch ( SOME_EXCEPTION, {
             handle_some_call();
         } );
-        finally ( {
+        finally ( { -> this would not be implemented soon
             printf ("DONE\n");
         } );
     }
@@ -32,7 +36,17 @@
 
  */
 #define try(block) \
-    block
+    jmp_buf *currentBuf = exceptions_getNewJmpBuf(); \
+    \
+    int exceptionHandlerNo = setjmp(*currentBuf); \
+    switch (exceptionHandlerNo) { \
+        case 0: \
+        block \
+        break; \
+        default: \
+            exceptions_defaultHandler(exceptionHandlerNo); \
+    } \
+    exceptions_destroyJmpBuf();
 
 /*
  *
@@ -40,9 +54,15 @@
 #define catch(exception, block)
 
 /*
- * 
+ * This would not be implemented soon. 
  */
 #define finally(block)
+
+/*
+ * 
+ */
+#define throw(exception) \
+    longjmp(*exceptions_getCurrentJmpBuf(), exception);
 
 /*
  *
@@ -52,16 +72,31 @@ void exceptions_init();
 /*
  *
  */
-jmp_buf *exceptions_getCurrentJmpBuffer();
+jmp_buf *exceptions_getCurrentJmpBuf();
 
 /*
  *
  */
-jmp_buf *exceptions_getNewJmpBuffer();
+jmp_buf *exceptions_getNewJmpBuf();
 
 /*
  *
  */
-void exceptions_destroyJmpBuffer();
+void exceptions_destroyJmpBuf();
+
+/*
+ *
+ */
+size_t exceptions_getCurrentCounter();
+
+/*
+ *
+ */
+jmp_buf *exceptions_getJmpBufAt(size_t p_index);
+
+/*
+ *
+ */
+void exceptions_defaultHandler(int p_exception);
 
 #endif // EXCEPTIONS_H
