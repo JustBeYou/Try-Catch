@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#define DEFAULT_JMP_BUFFER_STACK_SIZE 512
+
 /*
  * Try statement is used to execute a block of instructions until an exception
  * is raisen. The block could not contain any catch or finnaly statement,
@@ -29,7 +31,8 @@
  );
 
  */
-#define try(block) do { block } while (false) 
+#define try(block) \
+    block
 
 /*
  *
@@ -40,5 +43,25 @@
  * 
  */
 #define finally(block)
+
+/*
+ *
+ */
+void exceptions_init();
+
+/*
+ *
+ */
+jmp_buf *exceptions_getCurrentJmpBuffer();
+
+/*
+ *
+ */
+jmp_buf *exceptions_getNewJmpBuffer();
+
+/*
+ *
+ */
+void exceptions_destroyJmpBuffer();
 
 #endif // EXCEPTIONS_H
