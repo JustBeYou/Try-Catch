@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include <setjmp.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define DEFAULT_JMP_BUFFER_STACK_SIZE 512
 
@@ -66,6 +68,29 @@
  */
 #define throw(exception) \
     longjmp(*exceptions_getCurrentJmpBuf(), exception);
+
+
+
+// TODO: should be dynamic
+#define EXCEPTION_NAME_LEN 128
+#define EXCEPTION_MSG_LEN 512
+
+typedef struct {
+    char name[EXCEPTION_NAME_LEN];
+    char msg[EXCEPTION_MSG_LEN];
+    void *data;
+} Exception;
+
+#define DECL_EXCEPTION(exception_name) \
+    static Exception exception_name(const char *msg) { \
+        Exception e; \
+        strncpy(e.name, #exception_name , EXCEPTION_NAME_LEN); \
+        strncpy(e.msg, msg, EXCEPTION_MSG_LEN); \
+        e.data = NULL; \
+        return e; \
+    }
+
+DECL_EXCEPTION(DefaultException)
 
 /*
  *
