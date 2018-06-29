@@ -9,12 +9,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 /*
  * exceptions.h
  *
- * This header file includes the whole library headers.
- * The try-catch-throw statements are defined here as they are just macros,
- * but their functionality is implemented in separate files
+ * This header contains declarations for try statement and exceptions.
  */
 
 // TODO: this should be dynamic value
@@ -48,6 +47,7 @@
  */
 #define try(block) \
     jmp_buf *currentBuf = exceptions_getNewJmpBuf(); \
+    catch_getNewCatchTable(); \
     \
     int exceptionHandlerNo = setjmp(*currentBuf); \
     switch (exceptionHandlerNo) { \
@@ -55,32 +55,12 @@
         block \
         break; \
         default: \
-            exceptions_defaultHandler(exceptionHandlerNo); \
+            exceptions_defaultHandler(catch_getThrownException()); \
     } \
-    exceptions_destroyJmpBuf();
+    exceptions_destroyJmpBuf(); \
+    catch_destroyCurrentTable();
 
-/*
- * It receives an exception object and registers it to the catch-table,
- * then it generates a 'case x:' statement using its ID in the table.
- * TODO: remove basic implementation and respect function brief
- */
-#define catch(exception, block) \
-    break; \
-    case exception: \
-        block
-
-/*
- * This would not be implemented soon. 
- */
-#define finally(block)
-
-/*
- * This statement generates an exception event using the received object.
- * It checks the catch-table and calls longjmp with the corresponding ID.
- * TODO: remove basic implementation and respect function brief
- */
-#define throw(exception) \
-    longjmp(*exceptions_getCurrentJmpBuf(), exception);
+#define EXCEPTION_NOT_HANDLED 0xdeadbeef
 
 // TODO: should be dynamic
 #define EXCEPTION_NAME_LEN 128
@@ -99,11 +79,11 @@ typedef struct {
  * it.
  */
 #define DECL_EXCEPTION(exception_name) \
-    static Exception exception_name(const char *msg, void *data) { \
-        Exception e; \
-        strncpy(e.name, #exception_name , EXCEPTION_NAME_LEN); \
-        strncpy(e.msg, msg, EXCEPTION_MSG_LEN); \
-        e.data = data; \
+    __attribute__((unused)) static Exception *exception_name(const char *msg, void *data) { \
+        Exception *e = malloc(sizeof(Exception)); \
+        strncpy(e->name, #exception_name , EXCEPTION_NAME_LEN); \
+        strncpy(e->msg, msg, EXCEPTION_MSG_LEN); \
+        e->data = data; \
         return e; \
     }
 
@@ -144,6 +124,6 @@ jmp_buf *exceptions_getJmpBufAt(size_t p_index);
  * If there is no try-catch that could handle the exception,
  * this function will be called.
  */
-void exceptions_defaultHandler(int p_exception);
+void exceptions_defaultHandler(Exception *p_exception);
 
 #endif // EXCEPTIONS_H
