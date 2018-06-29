@@ -13,7 +13,7 @@ set( CMAKE_C_FLAGS_DEBUG "-g -O0" )
 set( CMAKE_C_FLAGS_RELEASE "-O3" )
 
 ## Source file containing the "main" function
-set( SOURCES exceptions.c )
+set( SOURCES exceptions.c catch.c )
 ## Specify a name for the generated executable file
 set( TRY_CATCH_LIB try-catch )
 
