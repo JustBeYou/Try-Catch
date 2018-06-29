@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-#include "exceptions.h"
+#include "stdexcept.h"
 
-#define TEST_EXCEPTION 123
+DECL_EXCEPTION(TestException);
 
 int main() {
     exceptions_init();
@@ -11,19 +11,12 @@ int main() {
     {
       printf("The try starts here\n");
 
-      throw(TEST_EXCEPTION);
+      throw(TestException("This is a test", NULL));
 
       printf("Should not arrive here...\n");
 
-      catch(TEST_EXCEPTION, 
-        {
-            printf("Gotcha!\n");
-        }
-      );
     }
     );
-
-    throw(TEST_EXCEPTION);
 
     printf("Neither here\n");
 
