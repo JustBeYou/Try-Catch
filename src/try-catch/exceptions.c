@@ -1,4 +1,5 @@
 #include "exceptions.h"
+#include "catch.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,7 +11,7 @@ size_t  g_jmpCounter;
 void exceptions_init() {
    int unhandledThrow = setjmp(g_jmpBufStack[0]);
    if (unhandledThrow) {
-        exceptions_defaultHandler(unhandledThrow);
+        exceptions_defaultHandler(catch_getThrownException());
    }
 }
 
@@ -35,7 +36,7 @@ jmp_buf *exceptions_getJmpBufAt(size_t p_index) {
     return &g_jmpBufStack[p_index];
 }
 
-void exceptions_defaultHandler(int p_exception) {
-    printf("[EXCEPTION] Unhandled %d\n", p_exception);
-    exit(p_exception);
+void exceptions_defaultHandler(Exception *p_exception) {
+    printf("[EXCEPTION] Unhandled %s: %s\n", p_exception->name, p_exception->msg);
+    exit(1);
 }
