@@ -24,13 +24,12 @@
  * TODO: remove basic implementation and respect function brief
  */
 #define throw(exception) \
-    Exception *exceptionToThrow_tmp_value_ifow309hf2dnsllv = exception; \
-    catch_throwException(exceptionToThrow_tmp_value_ifow309hf2dnsllv); \
-    longjmp(*exceptions_getCurrentJmpBuf(), catch_getExceptionId(exceptionToThrow_tmp_value_ifow309hf2dnsllv));
+    catch_throwException(exception); \
+    longjmp(*exceptions_getCurrentJmpBuf(), catch_getExceptionId(catch_getThrownException()));
 
 
 typedef struct catch_element {
-    Exception e;
+    Exception *e;
     size_t id;
     struct catch_element *next;
 } CatchElement;
@@ -39,7 +38,7 @@ typedef struct catch_element {
 
 typedef struct catch_table {
     CatchElement *table;
-    Exception thrown;
+    Exception *thrown;
     size_t catchCount;
 } CatchTable;
 
