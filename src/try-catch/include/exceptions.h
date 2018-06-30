@@ -34,14 +34,14 @@
         int y = some_call(x);
 
         printf ("%d\n", y);
-        
-        catch ( SOME_EXCEPTION, {
-            handle_some_call();
-        } );
-        finally ( { -> this would not be implemented soon
-            printf ("DONE\n");
-        } );
     }
+
+    catch ( SOME_EXCEPTION(NULL, NULL), {
+        handle_some_call();
+    } )
+    finally ( { -> this would not be implemented soon
+        printf ("DONE\n");
+    } )
  );
 
  */
@@ -50,12 +50,10 @@
     catch_getNewCatchTable(); \
     \
     int exceptionHandlerNo = setjmp(*currentBuf); \
-    switch (exceptionHandlerNo) { \
-        case 0: \
-        block \
-        break; \
-        default: \
-            exceptions_defaultHandler(catch_getThrownException()); \
+    \
+    if (exceptionHandlerNo == 0) block \
+    else { \
+        exceptions_defaultHandler(catch_getThrownException()); \
     } \
     exceptions_destroyJmpBuf(); \
     catch_destroyCurrentTable();
@@ -82,7 +80,8 @@ typedef struct {
     __attribute__((unused)) static Exception *exception_name(const char *msg, void *data) { \
         Exception *e = malloc(sizeof(Exception)); \
         strncpy(e->name, #exception_name , EXCEPTION_NAME_LEN); \
-        strncpy(e->msg, msg, EXCEPTION_MSG_LEN); \
+        if (msg != NULL) strncpy(e->msg, msg, EXCEPTION_MSG_LEN); \
+        else msg = NULL; \
         e->data = data; \
         return e; \
     }

@@ -11,9 +11,7 @@
  * TODO: remove basic implementation and respect function brief
  */
 #define catch(exception, block) \
-    break; \
-    case exception: \
-        block
+    else if (exceptionHandlerNo == catch_getExceptionId(exception)) block
 
 /*
  * This would not be implemented soon. 
