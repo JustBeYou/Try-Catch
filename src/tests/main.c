@@ -16,7 +16,13 @@ int main() {
       printf("Should not arrive here...\n");
 
     }
-    );
+
+    catch(TestException(NULL, NULL),
+        {
+            printf("Exception catched\n");
+        })
+
+    )
 
     printf("Neither here\n");
 
