@@ -49,7 +49,7 @@
     jmp_buf *currentBuf = exceptions_getNewJmpBuf(); \
     catch_getNewCatchTable(); \
     \
-    int exceptionHandlerNo = setjmp(*currentBuf); \
+    size_t exceptionHandlerNo = (size_t) setjmp(*currentBuf); \
     \
     if (exceptionHandlerNo == 0) block \
     else { \
