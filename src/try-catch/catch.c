@@ -12,6 +12,7 @@ size_t catch_getNewCatchTable() {
     ++g_catchCounter; 
     g_catchTablesStack[g_catchCounter].table = NULL;
     g_catchTablesStack[g_catchCounter].catchCount = 0;
+    g_catchTablesStack[g_catchCounter].thrown = NULL;
 
     return g_catchCounter;
 }
@@ -25,8 +26,13 @@ void catch_destroyCurrentTable() {
 
     while (table != NULL) {
         CatchElement *next = table->next;
+        free(table->e);
         free(table);
         table = next;
+    }
+
+    if (g_catchTablesStack[g_catchCounter + 1].thrown != NULL) { 
+        free(g_catchTablesStack[g_catchCounter + 1].thrown);
     }
 }
 
@@ -37,7 +43,7 @@ size_t catch_getExceptionId(Exception *p_exception) {
     size_t id = 1; 
 
     while (table != NULL) {
-        if (!strcmp(p_exception->name, table->e.name)) {
+        if (!strcmp(p_exception->name, table->e->name)) {
             return id;
         }
 
@@ -53,18 +59,18 @@ void catch_registerException(Exception *p_exception) {
     CatchElement *new = malloc(sizeof(CatchElement));
 
     new->id = ++g_catchTablesStack[g_catchCounter].catchCount;
-    memcpy(&new->e, p_exception, sizeof(Exception));
+    new->e = p_exception;
     new->next = table;
 
     g_catchTablesStack[g_catchCounter].table = new;
 }
 
 Exception *catch_getThrownException() {
-    return &g_catchTablesStack[g_catchCounter].thrown;
+    return g_catchTablesStack[g_catchCounter].thrown;
 }
 
 void catch_throwException(Exception *p_exception) {
-    memcpy(&g_catchTablesStack[g_catchCounter].thrown, p_exception, sizeof(Exception));
+    g_catchTablesStack[g_catchCounter].thrown = p_exception;
 }
 
 size_t catch_getCurrentTableCatchCount() {
