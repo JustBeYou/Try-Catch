@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./src/bin/tests
+valgrind --leak-check=full ./src/bin/tests
