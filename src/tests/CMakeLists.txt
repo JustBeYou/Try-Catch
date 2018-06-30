@@ -9,7 +9,7 @@ include_directories( ${PROJECT_SOURCE_DIR}/try-catch/include )
 
 ## C compiler options
 set( CMAKE_C_FLAGS "-Wall -Wextra -std=c11" )
-set( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+set( CMAKE_C_FLAGS_DEBUG "-g -O0 -save-temps" )
 set( CMAKE_C_FLAGS_RELEASE "-O3" )
 
 ## Source file containing the "main" function
